@@ -1,2 +1,62 @@
 <!DOCTYPE html>
-<p> test </p>
+<html>
+    <title>참가하시겠습니까?</title>
+    <head>
+        <style>
+           .text_style {
+               color: white;
+               font-weight: bold;
+               font-size: 25;
+               position: relative;
+               text-align: center;
+           }
+           .text_style_emoji {
+               color: rgb(0, 0, 0);
+               font-weight: bold;
+               font-size: 25;
+           }
+           .img_s {
+            object-fit: contain;
+            display: block; 
+            margin: 0px auto;
+           }
+           .img_ss {
+            object-fit: contain;
+            display: block; 
+            margin: 0px auto;
+            
+           }
+           .button {
+               color: rgb(0, 0, 0);
+               border-top-left-radius: 10px;
+               border-top-right-radius: 10px;
+               border-bottom-left-radius: 10px;
+               border-bottom-right-radius: 10px;
+               border: none;
+               background-color: rgb(114, 114, 114);
+               display:  block;
+               margin: 0px auto;
+               font-weight: bold;
+               font-size: 25;
+           }
+           .button:hover {
+                color: rgb(172, 172, 172);
+           }
+           .nav {
+               list-style: none;
+               height: 40px;
+               padding: 5px 1px;
+               margin: 0;
+               background-color:rgb(255, 255, 255);
+           }
+           
+        </style>
+    </head>
+    
+    <body lang="ko" style="background-color: rgb(41, 41, 41);">
+        <img class="img_ss" width="400" height="400" src="img\scroll.png" alt="이 브라우저는 지원하지 않습니다!" />
+        <img width="800" height="800" class="img_s" src="img\squad.png" alt="이 브라우저는 지원하지 않습니다!"/>
+        <p class="text_style">캠페인의 참가를 원하십니까?</p>
+        <button class="button" style="width: 110pt; height: 20pt;" onclick="location.href = 'main.html'">참가</button>
+    </body>
+</html>
