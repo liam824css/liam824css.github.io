@@ -1,21 +1,30 @@
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <title>reCAPTCHA</title>
-    <script type="text/javascript">
-      var onloadCallback = function() {
-        grecaptcha.render('html_element', {
-          'sitekey' : '6LcPV_AkAAAAAFHqIgplvRQIf3p5V5rXih_6J4u0'
-        });
-      };
-    </script>
-  </head>
-  <body>
-    <form action="?" method="POST">
-      <div id="html_element"></div>
-      <br>
-      <input type="submit" value="Submit">
-    </form>
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-        async defer>
-    </script>
-  </body>
+	<head>
+		<script src="https://www.google.com/recaptcha/api.js"></script>
+	</head>
+	<body>
+
+
+				<div class="g-recaptcha" data-sitekey="사이트 키 입력"></div>								
+				<button type="submit" onclick='return check_recaptcha();'>버튼</button>
+
+				
+		<!-- Scripts -->
+
+			<script>
+			function check_recaptcha(){
+				var v = grecaptcha.getResponse();
+				if (v.length ==0) {
+					alert ("'로봇이 아닙니다.'를 체크해주세요.");
+					return false;
+				} else {
+					location.reload();
+					return true;
+				}
+			}
+			</script>
+
+
+	</body>
+</html>
