@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSA Report</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> 
+  </head>
+
+  <body>
+
+    <header>
+      <h2 class="logo">SSA Reports</h2>
+      <nav class="navigation">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="reports.html">Reports</a>
+        <a href="contact.html">Contact</a>
+        <button class="btnLogin-popup">Login ( DEV )</button>
+      </nav>
+    </header>
+    <header class="Info">
+
+      \\ Login Form and Reg Form is not working for any people, These Forms works for Developer. We will fix this problem in short time. \\
+
+    </header>
+    
+    <h1 style="position: absolute; top: 15%; color: white; font-size: 3em;">Contact </h1>
+    <hr style="background-color: white; border:solid 2px white; position: absolute; top: 22%; width: 95%; display: flex; align-items: center;"/>
+    <h2 style="position: absolute; top: 25%; color: white; font-size: 2em;">How to contact us?</h2>
+    <h2 style="position: absolute; top: 30%; color: white; font-size: 2em;">1.email <ion-icon name="mail"></ion-icon><br>Contact to aclvfw@gmail.com <br>And we will asnwer to you in 2~3 days <br><br>2.Kakaotalk <ion-icon name="chatbubbles"></ion-icon><br>Contact to https://open.kakao.com/o/gPqc3Prf </h2>
+    <div class="wrapper">
+      <span class="icon-close">
+        <ion-icon name="close"></ion-icon>
+      </span>
+  
+      <div class="from-box login">
+        <h2>Login</h2>
+        <form action="#">
+          <div class="input-box">
+            <span class="icon"><ion-icon name="mail"></ion-icon></span>
+            <input type="email" id="userId" required>
+            <label>ID</label>
+          </div>
+          <div class="input-box">
+            <span class="icon"> <ion-icon name="key"></ion-icon></span>
+            <input type="password" required>
+            <label>Key</label>
+          </div>
+          <div class="remember-forgot">
+            <label><input type="checkbox" id="idSaveCheck"> Remember me</label>
+            <a href="#">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn">login</button>
+          <div class="login-register">
+            <p>Do you want to join us?<a href="#" class="register-link"> Register</a></p>
+          </div>
+        </form>
+      </div>
+
+      <div class="from-box register">
+        <h2>Registeration</h2>
+        <form action="#">
+          <div class="input-box">
+            <span class="icon"><ion-icon name="person-circle"></ion-icon></span>
+            <input type="text" required>
+            <label>Username</label>
+          </div>
+          <div class="input-box">
+            <span class="icon"><ion-icon name="mail"></ion-icon></span>
+            <input type="email" required>
+            <label>ID</label>
+          </div>
+          <div class="input-box">
+            <span class="icon"> <ion-icon name="key"></ion-icon></span>
+            <input type="password" required>
+            <label>Key</label>
+          </div>
+          <div class="remember-forgot">
+            <label><input type="checkbox"> I agree to the terms and conditions</label>
+          </div>
+          <button type="submit" class="btn">Register</button>
+          <div class="login-register">
+            <p>Already have an account?<a href="#" class="login-link"> Login</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+
+</html>
