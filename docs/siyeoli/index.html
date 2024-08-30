@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Siyeoli">
+    <title>시열이 아카이브</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="top_bar">
+        <i class="fi fi-rs-document" style="font-size: 24px;"></i>
+        <p id="text">Siyeoli</p>
+    </div>
+    <div class="container">
+        <table id="fileTable">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody id="fileList"></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchFileList() {
+            const repoOwner = 'liam824css';  // GitHub 사용자명
+            const repoName = 'Siyeoli_archive';   // GitHub 저장소 이름
+            const branchName = 'main';                 // 브랜치 이름
+            const accessToken = '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'; // GitHub 개인 접근 토큰
+
+            const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents?ref=${branchName}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `token ${accessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const files = await response.json();
+                const fileList = document.getElementById('fileList');
+
+                // Ensure the fileList element exists 
+                if (!fileList) {
+                    throw new Error('Element with ID "fileList" not found.');
+                }
+
+                files.forEach(file => {
+                    if (file.type === 'file') {
+                        const row = document.createElement('tr');
+
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = file.name;
+                        row.appendChild(nameCell);
+
+                        const buttonCell = document.createElement('td');
+                        const downloadButton = document.createElement('button');
+                        downloadButton.textContent = 'Download';
+                        downloadButton.onclick = () => {
+                            // Create a temporary link element
+                            const link = document.createElement('a');
+                            link.href = file.download_url;
+                            link.download = file.name;
+                            link.style.display = 'none';
+                            
+                            // Append the link to the document
+                            document.body.appendChild(link);
+                            
+                            // Programmatically click the link to trigger the download
+                            link.click();
+                            
+                            // Remove the link from the document
+                            document.body.removeChild(link);
+                        };
+                        buttonCell.appendChild(downloadButton);
+                        row.appendChild(buttonCell);
+
+                        fileList.appendChild(row);
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching file list:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchFileList);
+    </script>
+</body>
+</html>
