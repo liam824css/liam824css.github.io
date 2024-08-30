@@ -58,13 +58,13 @@
             <input type="password" id="password" required>
             <button type="submit">Submit</button>
             <div id="error" class="error hidden">
-                Incorrect password. Please try again.
+         
             </div>
         </form>
     </div>
 
     <script>
-        const correctPassword = '123456'; // 비밀번호를 직접 코드에 하드코딩
+        const correctPassword = 'nigga'; // 비밀번호를 직접 코드에 하드코딩
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // 폼 제출 방지
@@ -73,7 +73,7 @@
 
             if (passwordInput === correctPassword) {
                 localStorage.setItem('loggedIn', 'true'); // 로그인 상태를 로컬 스토리지에 저장
-                window.location.href = 'index.html'; // 로그인 후 리다이렉트
+                window.location.href = 'archive.html'; // 로그인 후 리다이렉트
             } else {
                 document.getElementById('error').classList.remove('hidden'); // 에러 메시지 표시
             }
