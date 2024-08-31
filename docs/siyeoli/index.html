@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="author" content="안현민">
+    <meta name="author" content="안현민민">
     <title>Siyeoli</title>
     <link rel="stylesheet" href="./style.css">
     <style>
@@ -130,7 +130,8 @@
     </div>
 
     <script>
-        const correctPassword = '123456'; // 비밀번호를 직접 코드에 하드코딩
+        const encodedPassword = 'MTIzNDU2'; //
+        const decodedPassword = atob(encodedPassword); // 
         const sessionDuration = 24 * 60 * 60 * 1000; // 24시간을 밀리초로 계산
 
         function checkSession() {
@@ -165,7 +166,7 @@
 
             const passwordInput = document.getElementById('password').value;
 
-            if (passwordInput === correctPassword) {
+            if (passwordInput === decodedPassword) {
                 const now = new Date().getTime();
                 localStorage.setItem('loginTime', now); // 로그인 시간을 현재 시간으로 업데이트
                 showMainContent();
