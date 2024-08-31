@@ -61,11 +61,29 @@
             margin: 20px auto;
         }
         .top_bar {
+            display: flex;
+            align-items: center;
             background-color: #ffffff; /* 상단 바 배경 색상 변경 */
             color: #007aff;
             padding: 10px;
-            text-align: center;
             border-bottom: 1px solid #ddd; /* 하단에 경계선 추가 */
+            margin-bottom: 20px;
+            justify-content: space-between; /* 로고와 버튼을 양 끝으로 배치 */
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .top_bar button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f4f4f4;
+            cursor: pointer;
+        }
+        .top_bar button.active {
+            background-color: #007aff;
+            color: #fff;
         }
         .container {
             padding: 20px;
@@ -73,6 +91,8 @@
         table {
             width: 100%; /* 테이블을 전체 너비로 설정 */
             border-collapse: collapse;
+            margin-bottom: 20px; /* 각 테이블 사이의 간격 추가 */
+            display: none; /* 기본적으로 숨김 처리 */
         }
         th, td {
             border: 1px solid #ddd;
@@ -96,6 +116,14 @@
             font-size: 0.875rem;
             color: #555;
         }
+        .table-container {
+            margin-bottom: 20px;
+        }
+        .no-files {
+            text-align: center;
+            font-size: 1rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -112,27 +140,21 @@
     </div>
 
     <div class="main-container">
-        <div class="top_bar">
-            <i class="fi fi-rs-document" style="font-size: 24px;"></i>
-            <p id="text">Siyeoli</p>
+        <div class="top_bar" id="topBar">
+            <div class="logo">Siyeoli</div>
+            <div id="topBarButtons">
+                <!-- 상단 바에 카테고리 버튼이 동적으로 추가됩니다. -->
+            </div>
         </div>
-        <div class="container">
-            <table id="fileTable">
-                <thead>
-                    <tr>
-                        <th>파일 이름</th>
-                        <th>다운로드</th>
-                    </tr>
-                </thead>
-                <tbody id="fileList"></tbody>
-            </table>
+        <div class="container" id="tableContainer">
+            <!-- 테이블이 동적으로 생성될 자리 -->
         </div>
     </div>
 
     <script>
-        const encodedPassword = 'MTIzNDU2'; //
-        const decodedPassword = atob(encodedPassword); // 
-        const sessionDuration = 24 * 60 * 60 * 1000; // 24시간을 밀리초로 계산
+        const encodedPassword = 'MTIzNdU2'; 
+        const decodedPassword = atob(encodedPassword); 
+        const sessionDuration = 24 * 60 * 60 * 1000; 
 
         function checkSession() {
             const loginTime = localStorage.getItem('loginTime');
@@ -141,12 +163,10 @@
             if (loginTime) {
                 const elapsed = now - parseInt(loginTime, 10);
                 if (elapsed < sessionDuration) {
-                    // 유효한 세션이므로 메인 콘텐츠 표시
                     showMainContent();
                     return;
                 }
             }
-            // 유효한 세션이 아니므로 로그인 폼 표시
             showLoginForm();
         }
 
@@ -158,34 +178,37 @@
         function showMainContent() {
             document.querySelector('.login-container').style.display = 'none';
             document.querySelector('.main-container').style.display = 'block';
-            fetchFileList(); // 메인 콘텐츠 표시 후 파일 목록 로드
+            fetchFileList(); 
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // 폼 제출 방지
+            event.preventDefault(); 
 
             const passwordInput = document.getElementById('password').value;
 
             if (passwordInput === decodedPassword) {
                 const now = new Date().getTime();
-                localStorage.setItem('loginTime', now); // 로그인 시간을 현재 시간으로 업데이트
+                localStorage.setItem('loginTime', now); 
                 showMainContent();
+            } else if (passwordInput === 'developer') {
+                localStorage.removeItem('loginTime'); 
+                showLoginForm();
             } else {
-                document.getElementById('error').classList.remove('hidden'); // 에러 메시지 표시
+                document.getElementById('error').classList.remove('hidden'); 
             }
         });
 
         async function fetchFileList() {
-            const repoOwner = 'liam824css';  // GitHub 사용자명
-            const repoName = 'Siyeoli_archive';   // GitHub 저장소 이름
-            const branchName = 'main';                 // 브랜치 이름
+            const repoOwner = 'liam824css'; 
+            const repoName = 'Siyeoli_archive'; 
+            const branchName = 'main'; 
             const accessToken = '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'; 
             const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents?ref=${branchName}`;
 
             try {
                 const response = await fetch(apiUrl, {
                     headers: {
-                        'Authorization': `${accessToken}` // 'token' 접두사 사용
+                        'Authorization': `${accessToken}`
                     }
                 });
 
@@ -194,55 +217,123 @@
                 }
 
                 const files = await response.json();
-                const fileList = document.getElementById('fileList');
+                const tableContainer = document.getElementById('tableContainer');
+                const topBarButtons = document.getElementById('topBarButtons');
+                
+                tableContainer.innerHTML = ''; 
+                topBarButtons.innerHTML = ''; 
 
-                // fileList 요소가 존재하는지 확인
-                if (!fileList) {
-                    throw new Error('ID가 "fileList"인 요소를 찾을 수 없습니다.');
-                }
+                const categories = ['국어', '수학', '사회', '과학', '영어', '도덕', '기가', '한문'];
+                const categoryTables = {};
+
+                categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.classList.add('table-container');
+                    const table = document.createElement('table');
+                    table.id = `${category}Table`;
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th colspan="2">${category} - 일반 파일</th>
+                            </tr>
+                            <tr>
+                                <th>파일 이름</th>
+                                <th>다운로드</th>
+                            </tr>
+                        </thead>
+                        <tbody id="${category}FileList"></tbody>
+                    `;
+                    categoryDiv.appendChild(table);
+                    tableContainer.appendChild(categoryDiv);
+                    categoryTables[category] = document.getElementById(`${category}FileList`);
+
+                    const repeatTableDiv = document.createElement('div');
+                    repeatTableDiv.classList.add('table-container');
+                    const repeatTable = document.createElement('table');
+                    repeatTable.id = `${category}RepeatTable`;
+                    repeatTable.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th colspan="2">${category} - 반복 학습 파일</th>
+                            </tr>
+                            <tr>
+                                <th>파일 이름</th>
+                                <th>다운로드</th>
+                            </tr>
+                        </thead>
+                        <tbody id="${category}RepeatFileList"></tbody>
+                    `;
+                    repeatTableDiv.appendChild(repeatTable);
+                    tableContainer.appendChild(repeatTableDiv);
+                    categoryTables[`${category}Repeat`] = document.getElementById(`${category}RepeatFileList`);
+
+                    const button = document.createElement('button');
+                    button.textContent = category;
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('table').forEach(table => table.style.display = 'none');
+                        document.querySelectorAll('.top_bar button').forEach(btn => btn.classList.remove('active'));
+                        document.getElementById(`${category}Table`).style.display = 'table';
+                        document.getElementById(`${category}RepeatTable`).style.display = 'table';
+                        button.classList.add('active');
+                    });
+                    topBarButtons.appendChild(button);
+                });
+
+                let hasFiles = false;
 
                 files.forEach(file => {
                     if (file.type === 'file') {
-                        const row = document.createElement('tr');
+                        const fileCategory = categories.find(category => file.name.includes(category));
+                        const isRepeat = file.name.includes('반복-훈련');
+                        if (fileCategory) {
+                            const tableBody = isRepeat ? categoryTables[`${fileCategory}Repeat`] : categoryTables[fileCategory];
+                            if (!tableBody.querySelector('tr')) {
+                                hasFiles = true;
+                            }
+                            const row = document.createElement('tr');
 
-                        const nameCell = document.createElement('td');
-                        nameCell.textContent = file.name;
-                        const downloadCount = localStorage.getItem(`downloadCount_${file.name}`) || 0;
-                        const countSpan = document.createElement('span');
-                        countSpan.textContent = ` (${downloadCount}회 다운로드)`;
-                        nameCell.appendChild(countSpan);
-                        row.appendChild(nameCell);
+                            const nameCell = document.createElement('td');
+                            nameCell.textContent = file.name;
+                            const downloadCount = localStorage.getItem(`downloadCount_${file.name}`) || 0;
+                            const countSpan = document.createElement('span');
+                            countSpan.textContent = ` (${downloadCount}회 다운로드)`;
+                            nameCell.appendChild(countSpan);
+                            row.appendChild(nameCell);
 
-                        const downloadCell = document.createElement('td');
-                        const downloadButton = document.createElement('button');
-                        downloadButton.textContent = '다운로드';
-                        downloadButton.onclick = () => {
-                            // 임시 링크 요소 생성
-                            const link = document.createElement('a');
-                            link.href = file.download_url;
-                            link.download = file.name;
-                            link.style.display = 'none';
-                            
-                            // 문서에 링크 추가
-                            document.body.appendChild(link);
-                            
-                            // 링크를 클릭하여 다운로드 트리거
-                            link.click();
-                            
-                            // 문서에서 링크 제거
-                            document.body.removeChild(link);
+                            const downloadCell = document.createElement('td');
+                            const downloadButton = document.createElement('button');
+                            downloadButton.textContent = '다운로드';
+                            downloadButton.onclick = () => {
+                                const link = document.createElement('a');
+                                link.href = file.download_url;
+                                link.download = file.name;
+                                link.style.display = 'none';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
 
-                            // 다운로드 카운트 업데이트
-                            const currentCount = parseInt(localStorage.getItem(`downloadCount_${file.name}`), 10) || 0;
-                            localStorage.setItem(`downloadCount_${file.name}`, currentCount + 1);
-                            countSpan.textContent = ` (${currentCount + 1}회 다운로드)`;
-                        };
-                        downloadCell.appendChild(downloadButton);
-                        row.appendChild(downloadCell);
+                                const currentCount = parseInt(localStorage.getItem(`downloadCount_${file.name}`), 10) || 0;
+                                localStorage.setItem(`downloadCount_${file.name}`, currentCount + 1);
+                                countSpan.textContent = ` (${currentCount + 1}회 다운로드)`;
+                            };
+                            downloadCell.appendChild(downloadButton);
+                            row.appendChild(downloadCell);
 
-                        fileList.appendChild(row);
+                            tableBody.appendChild(row);
+                        }
                     }
                 });
+
+                if (!hasFiles) {
+                    const noFilesMessage = document.createElement('div');
+                    noFilesMessage.classList.add('no-files');
+                    noFilesMessage.textContent = '파일이 없습니다.';
+                    tableContainer.appendChild(noFilesMessage);
+                }
+
+                if (categories.length > 0) {
+                    topBarButtons.querySelector('button').click();
+                }
             } catch (error) {
                 console.error('파일 목록을 가져오는 중 오류 발생:', error);
             }
