@@ -3,18 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Siyeoli">
-    <title>Login</title>
+    <title>로그인 및 아카이브</title>
     <link rel="stylesheet" href="./style.css">
     <style>
         /* 인라인 스타일: 로그인 페이지를 위한 간단한 스타일 */
         body {
-            background-color: #f7f7f9;
             font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 0;
         }
         .login-container {
             background: #ffffff;
@@ -23,6 +19,7 @@
             padding: 20px;
             width: 300px;
             text-align: center;
+            margin: 20px auto;
         }
         .login-container input[type="password"] {
             padding: 10px;
@@ -48,23 +45,123 @@
             color: red;
             margin-top: 10px;
         }
+        .hidden {
+            display: none;
+        }
+        /* 인라인 스타일: 메인 페이지를 위한 간단한 스타일 */
+        .main-container {
+            display: none; /* 기본적으로 숨김 처리 */
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%; /* 테이블의 너비를 넓게 설정 */
+            margin: 20px auto;
+        }
+        .top_bar {
+            background-color: #007aff;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%; /* 테이블을 전체 너비로 설정 */
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .button-container button {
+            padding: 5px 10px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .copy-message {
+            color: green;
+            font-size: 0.875rem;
+            margin-left: 10px;
+        }
+        .download-count {
+            font-size: 0.875rem;
+            color: #555;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h2>Login</h2>
+        <h2>로그인</h2>
         <form id="loginForm">
-            <label for="password">Password:</label>
+            <label for="password">비밀번호:</label>
             <input type="password" id="password" required>
-            <button type="submit">Submit</button>
+            <button type="submit">제출</button>
             <div id="error" class="error hidden">
-         
+                비밀번호가 틀렸습니다. 다시 시도해 주세요.
             </div>
         </form>
     </div>
 
+    <div class="main-container">
+        <div class="top_bar">
+            <i class="fi fi-rs-document" style="font-size: 24px;"></i>
+            <p id="text">Siyeoli</p>
+        </div>
+        <div class="container">
+            <table id="fileTable">
+                <thead>
+                    <tr>
+                        <th>파일 이름</th>
+                        <th>다운로드</th>
+                        <th>복사</th>
+                    </tr>
+                </thead>
+                <tbody id="fileList"></tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        const correctPassword = 'nigga'; // 비밀번호를 직접 코드에 하드코딩
+        const correctPassword = '123456'; // 비밀번호를 직접 코드에 하드코딩
+        const sessionDuration = 24 * 60 * 60 * 1000; // 24시간을 밀리초로 계산
+
+        function checkSession() {
+            const loginTime = localStorage.getItem('loginTime');
+            const now = new Date().getTime();
+
+            if (loginTime) {
+                const elapsed = now - parseInt(loginTime, 10);
+                if (elapsed < sessionDuration) {
+                    // 유효한 세션이므로 메인 콘텐츠 표시
+                    showMainContent();
+                    return;
+                }
+            }
+            // 유효한 세션이 아니므로 로그인 폼 표시
+            showLoginForm();
+        }
+
+        function showLoginForm() {
+            document.querySelector('.login-container').style.display = 'block';
+            document.querySelector('.main-container').style.display = 'none';
+        }
+
+        function showMainContent() {
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.main-container').style.display = 'block';
+            fetchFileList(); // 메인 콘텐츠 표시 후 파일 목록 로드
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // 폼 제출 방지
@@ -72,12 +169,109 @@
             const passwordInput = document.getElementById('password').value;
 
             if (passwordInput === correctPassword) {
-                localStorage.setItem('loggedIn', 'true'); // 로그인 상태를 로컬 스토리지에 저장
-                window.location.href = 'archive.html'; // 로그인 후 리다이렉트
+                const now = new Date().getTime();
+                localStorage.setItem('loginTime', now); // 로그인 시간을 현재 시간으로 업데이트
+                showMainContent();
             } else {
                 document.getElementById('error').classList.remove('hidden'); // 에러 메시지 표시
             }
         });
+
+        async function fetchFileList() {
+            const repoOwner = 'liam824css';  // GitHub 사용자명
+            const repoName = 'Siyeoli_archive';   // GitHub 저장소 이름
+            const branchName = 'main';                 // 브랜치 이름
+            const accessToken = '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'; 
+            const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents?ref=${branchName}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `${accessToken}` // 'token' 접두사 사용
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+
+                const files = await response.json();
+                const fileList = document.getElementById('fileList');
+
+                // fileList 요소가 존재하는지 확인
+                if (!fileList) {
+                    throw new Error('ID가 "fileList"인 요소를 찾을 수 없습니다.');
+                }
+
+                files.forEach(file => {
+                    if (file.type === 'file') {
+                        const row = document.createElement('tr');
+
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = file.name;
+                        const downloadCount = localStorage.getItem(`downloadCount_${file.name}`) || 0;
+                        const countSpan = document.createElement('span');
+                        countSpan.textContent = ` (${downloadCount}회 다운로드)`;
+                        nameCell.appendChild(countSpan);
+                        row.appendChild(nameCell);
+
+                        const downloadCell = document.createElement('td');
+                        const downloadButton = document.createElement('button');
+                        downloadButton.textContent = '다운로드';
+                        downloadButton.onclick = () => {
+                            // 임시 링크 요소 생성
+                            const link = document.createElement('a');
+                            link.href = file.download_url;
+                            link.download = file.name;
+                            link.style.display = 'none';
+                            
+                            // 문서에 링크 추가
+                            document.body.appendChild(link);
+                            
+                            // 링크를 클릭하여 다운로드 트리거
+                            link.click();
+                            
+                            // 문서에서 링크 제거
+                            document.body.removeChild(link);
+
+                            // 다운로드 카운트 업데이트
+                            const currentCount = parseInt(localStorage.getItem(`downloadCount_${file.name}`), 10) || 0;
+                            localStorage.setItem(`downloadCount_${file.name}`, currentCount + 1);
+                            countSpan.textContent = ` (${currentCount + 1}회 다운로드)`;
+                        };
+                        downloadCell.appendChild(downloadButton);
+                        row.appendChild(downloadCell);
+
+                        const copyCell = document.createElement('td');
+                        const copyButton = document.createElement('button');
+                        copyButton.textContent = '복사';
+                        copyButton.onclick = () => {
+                            navigator.clipboard.writeText(file.download_url).then(() => {
+                                // 복사 성공 메시지 표시
+                                const message = document.createElement('span');
+                                message.textContent = '복사됨!';
+                                message.className = 'copy-message';
+                                
+                                copyCell.appendChild(message);
+                                setTimeout(() => {
+                                    copyCell.removeChild(message); // 메시지 자동 제거
+                                }, 2000); // 2초 후 메시지 제거
+                            }).catch(err => {
+                                console.error('복사 실패:', err);
+                            });
+                        };
+                        copyCell.appendChild(copyButton);
+                        row.appendChild(copyCell);
+
+                        fileList.appendChild(row);
+                    }
+                });
+            } catch (error) {
+                console.error('파일 목록을 가져오는 중 오류 발생:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkSession);
     </script>
 </body>
 </html>
