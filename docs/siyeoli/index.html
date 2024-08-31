@@ -57,22 +57,27 @@
             border-radius: 8px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 80%; /* 테이블의 너비를 넓게 설정 */
+            width: 90%; /* 화면의 너비를 사용 */
             margin: 20px auto;
         }
         .top_bar {
             display: flex;
             align-items: center;
-            background-color: #ffffff; /* 상단 바 배경 색상 변경 */
+            background-color: #ffffff;
             color: #007aff;
             padding: 10px;
-            border-bottom: 1px solid #ddd; /* 하단에 경계선 추가 */
-            margin-bottom: 20px;
-            justify-content: space-between; /* 로고와 버튼을 양 끝으로 배치 */
+            border-bottom: 1px solid #ddd;
+            position: relative;
         }
         .logo {
             font-size: 24px;
             font-weight: bold;
+            flex-shrink: 0;
+        }
+        .top_bar #topBarButtons {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
         }
         .top_bar button {
             padding: 10px;
@@ -80,6 +85,10 @@
             border-radius: 4px;
             background-color: #f4f4f4;
             cursor: pointer;
+            margin: 0 5px;
+            white-space: nowrap; /* 버튼 텍스트 줄 바꿈 방지 */
+            text-align: center;
+            flex-grow: 1;
         }
         .top_bar button.active {
             background-color: #007aff;
@@ -124,6 +133,28 @@
             font-size: 1rem;
             color: #888;
         }
+        /* 반응형 디자인: 모바일에서의 스타일링 */
+        @media (max-width: 768px) {
+            .top_bar {
+                flex-direction: column;
+                align-items: center;
+            }
+            .logo {
+                margin-bottom: 10px;
+            }
+            .top_bar #topBarButtons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .top_bar button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            .main-container {
+                width: 100%; /* 모바일에서 너비를 100%로 설정 */
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -143,7 +174,7 @@
         <div class="top_bar" id="topBar">
             <div class="logo">Siyeoli</div>
             <div id="topBarButtons">
-                <!-- 상단 바에 카테고리 버튼이 동적으로 추가됩니다. -->
+                <!-- 상단 바에 과목 버튼이 동적으로 추가됩니다. -->
             </div>
         </div>
         <div class="container" id="tableContainer">
@@ -229,6 +260,7 @@
                 categories.forEach(category => {
                     const categoryDiv = document.createElement('div');
                     categoryDiv.classList.add('table-container');
+
                     const table = document.createElement('table');
                     table.id = `${category}Table`;
                     table.innerHTML = `
@@ -245,7 +277,7 @@
                     `;
                     categoryDiv.appendChild(table);
                     tableContainer.appendChild(categoryDiv);
-                    categoryTables[category] = document.getElementById(`${category}FileList`);
+                    categoryTables[`${category}`] = document.getElementById(`${category}FileList`);
 
                     const repeatTableDiv = document.createElement('div');
                     repeatTableDiv.classList.add('table-container');
@@ -284,7 +316,7 @@
                 files.forEach(file => {
                     if (file.type === 'file') {
                         const fileCategory = categories.find(category => file.name.includes(category));
-                        const isRepeat = file.name.includes('반복-훈련');
+                        const isRepeat = file.name.includes('반복');
                         if (fileCategory) {
                             const tableBody = isRepeat ? categoryTables[`${fileCategory}Repeat`] : categoryTables[fileCategory];
                             if (!tableBody.querySelector('tr')) {
