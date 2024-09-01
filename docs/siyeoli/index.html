@@ -275,190 +275,212 @@
         }
 
         function displayFiles(files) {
-            const tableContainer = document.getElementById('tableContainer');
-            const topBarButtons = document.getElementById('topBarButtons');
-            tableContainer.innerHTML = ''; 
-            topBarButtons.innerHTML = ''; 
+    const tableContainer = document.getElementById('tableContainer');
+    const topBarButtons = document.getElementById('topBarButtons');
+    tableContainer.innerHTML = ''; 
+    topBarButtons.innerHTML = ''; 
 
-            const categories = ['국어', '수학', '역사', '과학', '영어', '도덕', '기가', '한문'];
-            const categoryTables = {};
+    const categories = ['국어', '수학', '역사', '과학', '영어', '도덕', '기가', '한문'];
+    const categoryTables = {};
 
-            categories.forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.classList.add('table-container');
+    categories.forEach(category => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.classList.add('table-container');
 
+        const table = document.createElement('table');
+        table.id = `${category}Table`;
+
+        let tableTitle = `${category} - 일반 파일`;
+        if (category === '역사') {
+            tableTitle = '개념 판서';
+        }
+
+        table.innerHTML = 
+            `<thead>
+                <tr>
+                    <th colspan="2">${tableTitle}</th>
+                </tr>
+                <tr>
+                    <th>파일 이름</th>
+                    <th>다운로드</th>
+                </tr>
+            </thead>
+            <tbody id="${category}FileList"></tbody>`;
+        categoryDiv.appendChild(table);
+        tableContainer.appendChild(categoryDiv);
+        categoryTables[`${category}`] = document.getElementById(`${category}FileList`);
+
+        if (category !== '수학' && category !== '역사') {
+            const repeatTableDiv = document.createElement('div');
+            repeatTableDiv.classList.add('table-container');
+            const repeatTable = document.createElement('table');
+            repeatTable.id = `${category}RepeatTable`;
+            repeatTable.innerHTML = 
+                `<thead>
+                    <tr>
+                        <th colspan="2">${category} - 반복 학습 파일</th>
+                    </tr>
+                    <tr>
+                        <th>파일 이름</th>
+                        <th>다운로드</th>
+                    </tr>
+                </thead>
+                <tbody id="${category}RepeatFileList"></tbody>`;
+            repeatTableDiv.appendChild(repeatTable);
+            tableContainer.appendChild(repeatTableDiv);
+            categoryTables[`${category}Repeat`] = document.getElementById(`${category}RepeatFileList`);
+        }
+
+        if (category === '수학') {
+            const mathTypes = ['함수', '삼각형', '사각형'];
+            mathTypes.forEach(type => {
+                const tableDiv = document.createElement('div');
+                tableDiv.classList.add('table-container');
                 const table = document.createElement('table');
-                table.id = `${category}Table`;
+                table.id = `${category}${type}Table`;
+                let tableTitle = '';
+
+                switch (type) {
+                    case '함수':
+                        tableTitle = '함수 실전';
+                        break;
+                    case '삼각형':
+                        tableTitle = '삼각형의 성질 실전';
+                        break;
+                    case '사각형':
+                        tableTitle = '사각형의 성질 실전';
+                        break;
+                }
+
                 table.innerHTML = 
                     `<thead>
                         <tr>
-                            <th colspan="2">${category} - 일반 파일</th>
+                            <th colspan="2">${category} - ${tableTitle}</th>
                         </tr>
                         <tr>
                             <th>파일 이름</th>
                             <th>다운로드</th>
                         </tr>
                     </thead>
-                    <tbody id="${category}FileList"></tbody>`;
-                categoryDiv.appendChild(table);
-                tableContainer.appendChild(categoryDiv);
-                categoryTables[`${category}`] = document.getElementById(`${category}FileList`);
-
-                if (category !== '수학' && category !== '역사') {
-                    const repeatTableDiv = document.createElement('div');
-                    repeatTableDiv.classList.add('table-container');
-                    const repeatTable = document.createElement('table');
-                    repeatTable.id = `${category}RepeatTable`;
-                    repeatTable.innerHTML = 
-                        `<thead>
-                            <tr>
-                                <th colspan="2">${category} - 반복 학습 파일</th>
-                            </tr>
-                            <tr>
-                                <th>파일 이름</th>
-                                <th>다운로드</th>
-                            </tr>
-                        </thead>
-                        <tbody id="${category}RepeatFileList"></tbody>`;
-                    repeatTableDiv.appendChild(repeatTable);
-                    tableContainer.appendChild(repeatTableDiv);
-                    categoryTables[`${category}Repeat`] = document.getElementById(`${category}RepeatFileList`);
-                }
-
-                if (category === '수학') {
-                    const mathTypes = ['함수', '삼각형', '사각형'];
-                    mathTypes.forEach(type => {
-                        const tableDiv = document.createElement('div');
-                        tableDiv.classList.add('table-container');
-                        const table = document.createElement('table');
-                        table.id = `${category}${type}Table`;
-                        table.innerHTML = 
-                            `<thead>
-                                <tr>
-                                    <th colspan="2">${category} - ${type} 파일</th>
-                                </tr>
-                                <tr>
-                                    <th>파일 이름</th>
-                                    <th>다운로드</th>
-                                </tr>
-                            </thead>
-                            <tbody id="${category}${type}FileList"></tbody>`;
-                        tableDiv.appendChild(table);
-                        tableContainer.appendChild(tableDiv);
-                        categoryTables[`${category}${type}`] = document.getElementById(`${category}${type}FileList`);
-                    });
-                }
-
-                if (category === '역사') {
-                    const historyTypes = ['교사용 교과서', '교과서'];
-                    historyTypes.forEach(type => {
-                        const tableDiv = document.createElement('div');
-                        tableDiv.classList.add('table-container');
-                        const table = document.createElement('table');
-                        table.id = `${category}${type}Table`;
-                        table.innerHTML = 
-                            `<thead>
-                                <tr>
-                                    <th colspan="2">${category} - ${type} 파일</th>
-                                </tr>
-                                <tr>
-                                    <th>파일 이름</th>
-                                    <th>다운로드</th>
-                                </tr>
-                            </thead>
-                            <tbody id="${category}${type}FileList"></tbody>`;
-                        tableDiv.appendChild(table);
-                        tableContainer.appendChild(tableDiv);
-                        categoryTables[`${category}${type}`] = document.getElementById(`${category}${type}FileList`);
-                    });
-                }
-
-                const button = document.createElement('button');
-                button.textContent = category;
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('table').forEach(table => table.style.display = 'none');
-                    document.querySelectorAll('.top_bar button').forEach(btn => btn.classList.remove('active'));
-                    document.querySelectorAll(`#${category}Table, #${category}RepeatTable, #${category}함수Table, #${category}삼각형Table, #${category}사각형Table, #${category}교사용 교과서Table, #${category}교과서Table`).forEach(table => table.style.display = 'table');
-                    button.classList.add('active');
-                });
-                topBarButtons.appendChild(button);
+                    <tbody id="${category}${type}FileList"></tbody>`;
+                tableDiv.appendChild(table);
+                tableContainer.appendChild(tableDiv);
+                categoryTables[`${category}${type}`] = document.getElementById(`${category}${type}FileList`);
             });
+        }
 
-            let hasFilesInAnyCategory = false;
-
-            files.forEach(file => {
-                if (file.type === 'file') {
-                    const fileCategory = categories.find(category => file.name.includes(category));
-                    const isRepeat = file.name.includes('반복');
-                    const isFunction = file.name.includes('함수');
-                    const isTriangle = file.name.includes('삼각형');
-                    const isSquare = file.name.includes('사각형');
-                    const isTeacherBook = file.name.includes('교사용 교과서');
-                    const isTextBook = file.name.includes('교과서');
-                    let tableKey = fileCategory;
-
-                    if (fileCategory === '역사' && isTextBook) {
-                        tableKey = '역사교과서';
-                    } else if (fileCategory === '역사' && isTeacherBook) {
-                        tableKey = '역사교사용 교과서';
-                    } else if (isRepeat) {
-                        tableKey += 'Repeat';
-                    } else if (isFunction) {
-                        tableKey += '함수';
-                    } else if (isTriangle) {
-                        tableKey += '삼각형';
-                    } else if (isSquare) {
-                        tableKey += '사각형';
-                    }
-
-                    if (categoryTables[tableKey]) {
-                        const tableBody = categoryTables[tableKey];
-                        const row = document.createElement('tr');
-                        const nameCell = document.createElement('td');
-                        nameCell.textContent = file.name;
-                        const downloadCount = localStorage.getItem(`downloadCount_${file.name}`) || 0;
-                        const countSpan = document.createElement('span');
-                        countSpan.textContent = `${downloadCount}회 다운로드`;
-                        nameCell.appendChild(countSpan);
-                        row.appendChild(nameCell);
-
-                        const downloadCell = document.createElement('td');
-                        const downloadButton = document.createElement('button');
-                        downloadButton.textContent = '다운로드';
-                        downloadButton.onclick = () => {
-                            const link = document.createElement('a');
-                            link.href = file.download_url;
-                            link.download = file.name;
-                            link.style.display = 'none';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-
-                            const currentCount = parseInt(localStorage.getItem(`downloadCount_${file.name}`), 10) || 0;
-                            localStorage.setItem(`downloadCount_${file.name}`, currentCount + 1);
-                            countSpan.textContent = `${currentCount + 1}회 다운로드`;
-                        };
-                        downloadCell.appendChild(downloadButton);
-                        row.appendChild(downloadCell);
-
-                        tableBody.appendChild(row);
-                        hasFilesInAnyCategory = true;
-                    }
-                }
+        if (category === '역사') {
+            const historyTypes = ['교사용 교과서', '교과서'];
+            historyTypes.forEach(type => {
+                const tableDiv = document.createElement('div');
+                tableDiv.classList.add('table-container');
+                const table = document.createElement('table');
+                table.id = `${category}${type}Table`;
+                table.innerHTML = 
+                    `<thead>
+                        <tr>
+                            <th colspan="2">${category} - ${type} 파일</th>
+                        </tr>
+                        <tr>
+                            <th>파일 이름</th>
+                            <th>다운로드</th>
+                        </tr>
+                    </thead>
+                    <tbody id="${category}${type}FileList"></tbody>`;
+                tableDiv.appendChild(table);
+                tableContainer.appendChild(tableDiv);
+                categoryTables[`${category}${type}`] = document.getElementById(`${category}${type}FileList`);
             });
+        }
 
-            if (!hasFilesInAnyCategory) {
-                const filePreparationMessage = document.createElement('div');
-                filePreparationMessage.classList.add('file-preparation');
-                filePreparationMessage.textContent = '파일 준비중';
-                tableContainer.innerHTML = '';
-                tableContainer.appendChild(filePreparationMessage);
+        const button = document.createElement('button');
+        button.textContent = category;
+        button.addEventListener('click', () => {
+            document.querySelectorAll('table').forEach(table => table.style.display = 'none');
+            document.querySelectorAll('.top_bar button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll(`#${category}Table, #${category}RepeatTable, #${category}함수Table, #${category}삼각형Table, #${category}사각형Table, #${category}교사용 교과서Table, #${category}교과서Table`).forEach(table => table.style.display = 'table');
+            button.classList.add('active');
+        });
+        topBarButtons.appendChild(button);
+    });
+
+    let hasFilesInAnyCategory = false;
+
+    files.forEach(file => {
+        if (file.type === 'file') {
+            const fileCategory = categories.find(category => file.name.includes(category));
+            const isRepeat = file.name.includes('반복');
+            const isFunction = file.name.includes('함수');
+            const isTriangle = file.name.includes('삼각형');
+            const isSquare = file.name.includes('사각형');
+            const isTeacherBook = file.name.includes('교사용 교과서');
+            const isTextBook = file.name.includes('교과서');
+            let tableKey = fileCategory;
+
+            if (fileCategory === '역사' && isTextBook) {
+                tableKey = '역사교과서';
+            } else if (fileCategory === '역사' && isTeacherBook) {
+                tableKey = '역사교사용 교과서';
+            } else if (isRepeat) {
+                tableKey += 'Repeat';
+            } else if (isFunction) {
+                tableKey += '함수';
+            } else if (isTriangle) {
+                tableKey += '삼각형';
+            } else if (isSquare) {
+                tableKey += '사각형';
             }
 
-            if (categories.length > 0) {
-                topBarButtons.querySelector('button').click();
+            if (categoryTables[tableKey]) {
+                const tableBody = categoryTables[tableKey];
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                nameCell.textContent = file.name;
+                const downloadCount = localStorage.getItem(`downloadCount_${file.name}`) || 0;
+                const countSpan = document.createElement('span');
+                countSpan.textContent = `${downloadCount}회 다운로드`;
+                nameCell.appendChild(countSpan);
+                row.appendChild(nameCell);
+
+                const downloadCell = document.createElement('td');
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = '다운로드';
+                downloadButton.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = file.download_url;
+                    link.download = file.name;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    const currentCount = parseInt(localStorage.getItem(`downloadCount_${file.name}`), 10) || 0;
+                    localStorage.setItem(`downloadCount_${file.name}`, currentCount + 1);
+                    countSpan.textContent = `${currentCount + 1}회 다운로드`;
+                };
+                downloadCell.appendChild(downloadButton);
+                row.appendChild(downloadCell);
+
+                tableBody.appendChild(row);
+                hasFilesInAnyCategory = true;
             }
         }
+    });
+
+    if (!hasFilesInAnyCategory) {
+        const filePreparationMessage = document.createElement('div');
+        filePreparationMessage.classList.add('file-preparation');
+        filePreparationMessage.textContent = '파일 준비중';
+        tableContainer.innerHTML = '';
+        tableContainer.appendChild(filePreparationMessage);
+    }
+
+    if (categories.length > 0) {
+        topBarButtons.querySelector('button').click();
+    }
+}
+
+
 
         document.addEventListener('DOMContentLoaded', checkSession);
     </script>
